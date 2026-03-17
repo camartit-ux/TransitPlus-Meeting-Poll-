@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Meeting Availability Poll — Q1 2025</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f0f4f8;
+    color: #1a1a1a;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+/* HEADER */
+.header {
+background: linear-gradient(135deg, #2C3E90 0%, #3B4F9E 100%);
+color: white;
+padding: 36px 48px 32px;
+border-bottom: 5px solid #f59e0b;
+}
+.header-label {
+font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+color: #94a3b8; margin-bottom: 10px;
+}
+.header h1 {
+font-size: 28px; font-weight: 600; letter-spacing: 0.3px; margin-bottom: 8px;
+}
+.header-sub { font-size: 14px; color: #cbd5e1; }
+.header-sub strong { color: #f59e0b; }
+
+/* MAIN */
+.main { max-width: 860px; margin: 0 auto; padding: 40px 24px 60px; }
+
+/* DST NOTICE */
+.dst-box {
+background: #fffbeb; border: 1px solid #fbbf24; border-left: 5px solid #f59e0b;
+border-radius: 8px; padding: 18px 22px; margin-bottom: 36px; font-size: 13px;
+line-height: 1.9; color: #78350f;
+}
+.dst-box strong { display: block; margin-bottom: 6px; font-size: 14px; color: #92400e; }
+
+/* FORM CARD */
+.form-card {
+background: white; border-radius: 14px; box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+overflow: hidden; margin-bottom: 28px;
+}
+.form-card-header {
+background: #2C3E90; padding: 18px 28px;
+display: flex; justify-content: space-between; align-items: center;
+}
+.form-card-header h2 { color: white; font-size: 17px; font-weight: 600; }
+.form-card-header span { color: #94a3b8; font-size: 12px; }
+.form-card-body { padding: 28px; }
+
+/* NAME INPUT */
+.name-group { margin-bottom: 28px; }
+.name-group label { display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px; letter-spacing: 0.5px; text-transform: uppercase; }
+.name-input {
+width: 100%; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 8px;
+font-size: 16px; font-family: inherit; color: #2C3E90; transition: border-color 0.2s;
+}
+.name-input:focus { outline: none; border-color: #f59e0b; }
+.name-input::placeholder { color: #94a3b8; }
+
+/* OPTIONS GRID */
+.options-label { font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 14px; letter-spacing: 0.5px; text-transform: uppercase; }
+.options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 28px; }
+
+.option-card {
+border: 2px solid #e2e8f0; border-radius: 10px; overflow: hidden;
+cursor: pointer; transition: all 0.2s; user-select: none;
+}
+.option-card:hover { border-color: #f59e0b; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(245,158,11,0.15); }
+.option-card.selected-yes  { border-color: #10b981; box-shadow: 0 0 0 3px rgba(16,185,129,0.15); }
+.option-card.selected-no   { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.12); opacity: 0.75; }
+.option-card.selected-maybe{ border-color: #8b5cf6; box-shadow: 0 0 0 3px rgba(139,92,246,0.15); }
+
+.option-top {
+background: #2C3E90; padding: 10px 14px;
+display: flex; justify-content: space-between; align-items: center;
+}
+.option-label { color: #f59e0b; font-weight: 700; font-size: 12px; letter-spacing: 2px; }
+.option-day   { color: #94a3b8; font-size: 11px; }
+
+.option-date-row { padding: 12px 14px 8px; border-bottom: 1px solid #f1f5f9; }
+.option-date { font-size: 20px; font-weight: 700; color: #2C3E90; }
+.option-year { font-size: 10px; color: #94a3b8; margin-bottom: 4px; }
+.dst-badge {
+display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 4px;
+font-weight: 700; margin-top: 4px;
+}
+.dst-pre  { background: #fef3c7; color: #92400e; }
+.dst-post { background: #d1fae5; color: #065f46; }
+
+.option-times { padding: 10px 14px 14px; }
+.tz-row { display: flex; align-items: center; gap: 9px; margin-bottom: 6px; }
+.tz-flag { font-size: 15px; width: 22px; }
+.tz-label { font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.8px; }
+.tz-time  { font-size: 15px; font-weight: 700; color: #2C3E90; }
+
+.option-pick {
+display: flex; gap: 0; border-top: 1px solid #f1f5f9;
+}
+.pick-btn {
+flex: 1; padding: 9px 4px; border: none; background: none; cursor: pointer;
+font-size: 12px; font-weight: 600; transition: background 0.15s;
+font-family: inherit;
+}
+.pick-btn:not(:last-child) { border-right: 1px solid #f1f5f9; }
+.pick-btn.yes   { color: #10b981; }
+.pick-btn.maybe { color: #8b5cf6; }
+.pick-btn.no    { color: #ef4444; }
+.pick-btn.yes:hover   { background: #d1fae5; }
+.pick-btn.maybe:hover { background: #ede9fe; }
+.pick-btn.no:hover    { background: #fee2e2; }
+.pick-btn.active-yes   { background: #d1fae5; }
+.pick-btn.active-maybe { background: #ede9fe; }
+.pick-btn.active-no    { background: #fee2e2; }
+
+/* NOTES */
+.notes-group label { display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px; letter-spacing: 0.5px; text-transform: uppercase; }
+.notes-input {
+width: 100%; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 8px;
+font-size: 14px; font-family: inherit; color: #2C3E90; resize: vertical; min-height: 70px;
+transition: border-color 0.2s;
+}
+.notes-input:focus { outline: none; border-color: #f59e0b; }
+.notes-input::placeholder { color: #94a3b8; }
+
+/* SUBMIT */
+.submit-btn {
+width: 100%; margin-top: 24px; padding: 15px; border: none;
+background: #f59e0b; color: #2C3E90; font-size: 16px; font-weight: 700;
+border-radius: 8px; cursor: pointer; letter-spacing: 0.5px;
+font-family: inherit; transition: background 0.2s, transform 0.1s;
+}
+.submit-btn:hover { background: #d97706; transform: translateY(-1px); }
+.submit-btn:active { transform: translateY(0); }
+
+/* THANK YOU */
+.thankyou {
+display: none; text-align: center; padding: 60px 28px;
+}
+.thankyou .check { font-size: 64px; margin-bottom: 20px; }
+.thankyou h2 { font-size: 26px; color: #2C3E90; margin-bottom: 12px; }
+.thankyou p { font-size: 15px; color: #64748b; line-height: 1.7; max-width: 420px; margin: 0 auto 28px; }
+.summary-box {
+background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;
+padding: 20px; text-align: left; max-width: 480px; margin: 0 auto;
+font-size: 14px; color: #475569; line-height: 2;
+}
+.summary-box strong { color: #2C3E90; }
+
+/* RESULTS TALLY */
+.tally-section { margin-top: 36px; }
+.tally-title { font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 14px; letter-spacing: 0.5px; text-transform: uppercase; }
+.tally-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.tally-card {
+background: white; border: 1px solid #e2e8f0; border-radius: 8px;
+padding: 14px 16px; display: flex; justify-content: space-between; align-items: center;
+}
+.tally-card .tl { font-size: 13px; color: #475569; }
+.tally-card .tl strong { display: block; color: #2C3E90; font-size: 15px; margin-bottom: 2px; }
+.tally-bars { display: flex; gap: 6px; }
+.tb { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+.tb-yes   { background: #d1fae5; color: #065f46; }
+.tb-maybe { background: #ede9fe; color: #4c1d95; }
+.tb-no    { background: #fee2e2; color: #991b1b; }
+
+/* print */
+@media print {
+body { background: white; }
+.dst-box { border-color: #999; }
+.submit-btn { display: none; }
+}
+</style>
+
+</head>
+<body>
+
+<div class="header">
+  <div class="header-label">Meeting Availability Poll</div>
+  <h1>All-Hands Employee Meeting — Q1 2025</h1>
+  <div class="header-sub">
+    Please indicate your availability for each time slot below.<br/>
+    <strong>RSVP by: March 22, 2025</strong>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- DST NOTICE -->
+
+  <div class="dst-box">
+    <strong>⏰ Daylight Saving Time Notice — Important</strong>
+    🇺🇸 The US moved to summer time on <strong>March 9</strong> — Colorado &amp; Idaho are on MDT (UTC−6), Pennsylvania on EDT (UTC−4).<br/>
+    🇪🇺 Europe moves to summer time on <strong>March 30</strong> — Rome stays on CET (UTC+1) for Options A–C, then switches to CEST (UTC+2) for Option D.<br/>
+    All times below are already adjusted. Please confirm the time shown <em>for your location</em>.
+  </div>
+
+  <!-- POLL FORM CARD -->
+
+  <div class="form-card" id="formCard">
+    <div class="form-card-header">
+      <h2>Your Availability</h2>
+      <span>Select one per option</span>
+    </div>
+    <div class="form-card-body">
+
+```
+  <div class="name-group">
+    <label>Who are you? *</label>
+    <select class="name-input" id="nameInput">
+      <option value="">— Please select your name —</option>
+      <option>Suzanne O'Neill</option>
+      <option>Erica Hamilton</option>
+      <option>Moira Moon</option>
+      <option>Sandy Frazier</option>
+      <option>Nicolò Zavaglio</option>
+      <option>Glenn Seibel</option>
+      <option>Anja Martin</option>
+    </select>
+  </div>
+
+  <div class="options-label">Select your availability for each date</div>
+  <div class="options-grid" id="optionsGrid">
+
+    <!-- OPTION A -->
+    <div class="option-card" id="card-A">
+      <div class="option-top">
+        <span class="option-label">OPTION A</span>
+        <span class="option-day">TUE</span>
+      </div>
+      <div class="option-date-row">
+        <div class="option-date">Mar 25</div>
+        <div class="option-year">2025</div>
+        <span class="dst-badge dst-pre">🕐 Rome pre-DST (CET)</span>
+      </div>
+      <div class="option-times">
+        <div class="tz-row"><span class="tz-flag">🏔️</span><div><div class="tz-label">CO / ID (MDT)</div><div class="tz-time">9:00 AM</div></div></div>
+        <div class="tz-row"><span class="tz-flag">🗽</span><div><div class="tz-label">Pennsylvania (EDT)</div><div class="tz-time">11:00 AM</div></div></div>
+        <div class="tz-row"><span class="tz-flag">🏛️</span><div><div class="tz-label">Rome (CET)</div><div class="tz-time">4:00 PM</div></div></div>
+      </div>
+      <div class="option-pick">
+        <button class="pick-btn yes"   onclick="pick('A','yes')">✅ Yes</button>
+        <button class="pick-btn maybe" onclick="pick('A','maybe')">🔄 Maybe</button>
+        <button class="pick-btn no"    onclick="pick('A','no')">❌ No</button>
+      </div>
+    </div>
+
+    <!-- OPTION B -->
+    <div class="option-card" id="card-B">
+      <div class="option-top">
+        <span class="option-label">OPTION B</span>
+        <span class="option-day">WED</span>
+      </div>
+      <div class="option-date-row">
+        <div class="option-date">Mar 26</div>
+        <div class="option-year">2025</div>
+        <span class="dst-badge dst-pre">🕐 Rome pre-DST (CET)</span>
+      </div>
+      <div class="option-times">
+        <div class="tz-row"><span class="tz-flag">🏔️</span><div><div class="tz-label">CO / ID (MDT)</div><div class="tz-time">10:00 AM</div></div></div>
+        <div class="tz-row"><span class="tz-flag">🗽</span><div><div class="tz-label">Pennsylvania (EDT)</div><div class="tz-time">12:00 PM</div></div></div>
+        <div class="tz-row"><span class="tz-flag">🏛️</span><div><div class="tz-label">Rome (CET)</div><div class="tz-time">5:00 PM</div></div></div>
+      </div>
+      <div class="option-pick">
+        <button class="pick-btn yes"   onclick="pick('B','yes')">✅ Yes</button>
+        <button class="pick-btn maybe" onclick="pick('B','maybe')">🔄 Maybe</button>
+        <button class="pick-btn no"    onclick="pick('B','no')">❌ No</button>
+      </div>
+    </div>
+
+    <!-- OPTION C -->
+    <div class="option-card" id="card-C">
+      <div class="option-top">
+        <span class="option-label">OPTION C</span>
+        <span class="option-day">THU</span>
+      </div>
+      <div class="option-date-row">
+        <div class="option-date">Mar 27</div>
+        <div class="option-year">2025</div>
+        <span class="dst-badge dst-pre">🕐 Rome pre-DST (CET)</span>
+      </div>
+      <div class="option-times">
+        <div class="tz-row"><span class="tz-flag">🏔️</span><div><div class="tz-label">CO / ID (MDT)</div><div class="tz-time">9:00 AM</div></div></div>
+        <div class="tz-row"><span class="tz-flag">🗽</span><div><div class="tz-label">Pennsylvania (EDT)</div><div class="tz-time">11:00 AM</div></div></div>
+        <div class="tz-row"><span class="tz-flag">🏛️</span><div><div class="tz-label">Rome (CET)</div><div class="tz-time">4:00 PM</div></div></div>
+      </div>
+      <div class="option-pick">
+        <button class="pick-btn yes"   onclick="pick('C','yes')">✅ Yes</button>
+        <button class="pick-btn maybe" onclick="pick('C','maybe')">🔄 Maybe</button>
+        <button class="pick-btn no"    onclick="pick('C','no')">❌ No</button>
+      </div>
+    </div>
+
+    <!-- OPTION D -->
+    <div class="option-card" id="card-D">
+      <div class="option-top">
+        <span class="option-label">OPTION D</span>
+        <span class="option-day">TUE</span>
+      </div>
+      <div class="option-date-row">
+        <div class="option-date">Apr 1</div>
+        <div class="option-year">2025</div>
+        <span class="dst-badge dst-post">✅ All on summer time</span>
+      </div>
+      <div class="option-times">
+        <div class="tz-row"><span class="tz-flag">🏔️</span><div><div class="tz-label">CO / ID (MDT)</div><div class="tz-time">9:00 AM</div></div></div>
+        <div class="tz-row"><span class="tz-flag">🗽</span><div><div class="tz-label">Pennsylvania (EDT)</div><div class="tz-time">11:00 AM</div></div></div>
+        <div class="tz-row"><span class="tz-flag">🏛️</span><div><div class="tz-label">Rome (CEST)</div><div class="tz-time">5:00 PM</div></div></div>
+      </div>
+      <div class="option-pick">
+        <button class="pick-btn yes"   onclick="pick('D','yes')">✅ Yes</button>
+        <button class="pick-btn maybe" onclick="pick('D','maybe')">🔄 Maybe</button>
+        <button class="pick-btn no"    onclick="pick('D','no')">❌ No</button>
+      </div>
+    </div>
+
+  </div><!-- /options-grid -->
+
+  <div class="notes-group">
+    <label>Notes (optional)</label>
+    <textarea class="notes-input" id="notesInput" placeholder="e.g. I can only attend for 30 min on Option B, prefer Option A..."></textarea>
+  </div>
+
+  <button class="submit-btn" onclick="submitForm()">Submit My Availability →</button>
+  <div id="errorMsg" style="color:#ef4444;font-size:13px;margin-top:10px;display:none;"></div>
+</div><!-- /form-card-body -->
+
+<!-- THANK YOU -->
+<div class="thankyou" id="thankYou">
+  <div class="check">✅</div>
+  <h2>Thank you!</h2>
+  <p>Your availability has been recorded. The organizer will confirm the final date once all responses are collected.</p>
+  <div class="summary-box" id="summaryBox"></div>
+</div>
+```
+
+  </div><!-- /form-card -->
+
+  <!-- LIVE TALLY (only shows after at least 1 submission) -->
+
+  <div class="tally-section" id="tallySection" style="display:none;">
+    <div class="tally-title">Response Tally (this session)</div>
+    <div class="tally-grid" id="tallyGrid"></div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+const selections = { A: null, B: null, C: null, D: null };
+const optionLabels = { A: "Tue Mar 25", B: "Wed Mar 26", C: "Thu Mar 27", D: "Tue Apr 1" };
+const tally = { A:{yes:0,maybe:0,no:0}, B:{yes:0,maybe:0,no:0}, C:{yes:0,maybe:0,no:0}, D:{yes:0,maybe:0,no:0} };
+
+function pick(opt, choice) {
+  selections[opt] = choice;
+  const card = document.getElementById('card-' + opt);
+  card.className = 'option-card selected-' + choice;
+
+  // Update button highlights
+  const btns = card.querySelectorAll('.pick-btn');
+  btns.forEach(b => {
+    b.classList.remove('active-yes','active-maybe','active-no');
+  });
+  const map = { yes: 0, maybe: 1, no: 2 };
+  btns[map[choice]].classList.add('active-' + choice);
+}
+
+function submitForm() {
+  const name = document.getElementById('nameInput').value.trim();
+  const errEl = document.getElementById('errorMsg');
+
+  if (!name) {
+    errEl.textContent = 'Please select your name before submitting.';
+    errEl.style.display = 'block';
+    document.getElementById('nameInput').focus();
+    return;
+  }
+  const unanswered = Object.keys(selections).filter(k => selections[k] === null);
+  if (unanswered.length > 0) {
+    errEl.textContent = `Please select Yes / Maybe / No for all 4 options (missing: Option ${unanswered.join(', Option ')}).`;
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+
+  // Update tally
+  Object.keys(selections).forEach(opt => { tally[opt][selections[opt]]++; });
+
+  // Build summary
+  const icons = { yes:'✅ Yes', maybe:'🔄 Maybe', no:'❌ No' };
+  const notes = document.getElementById('notesInput').value.trim();
+  let summaryHtml = `<strong>Submitted for: ${name}</strong><br/><br/>`;
+  Object.keys(selections).forEach(opt => {
+    summaryHtml += `<strong>Option ${opt}</strong> (${optionLabels[opt]}): ${icons[selections[opt]]}<br/>`;
+  });
+  if (notes) summaryHtml += `<br/><strong>Notes:</strong> ${notes}`;
+
+  document.getElementById('summaryBox').innerHTML = summaryHtml;
+
+  // Show thank you
+  document.querySelector('.form-card-body').style.display = 'none';
+  document.getElementById('thankYou').style.display = 'block';
+
+  // Show tally
+  renderTally();
+}
+
+function renderTally() {
+  const section = document.getElementById('tallySection');
+  const grid = document.getElementById('tallyGrid');
+  grid.innerHTML = '';
+
+  const total = Object.values(tally.A).reduce((a,b)=>a+b,0) > 0;
+  if (!total) { section.style.display='none'; return; }
+
+  section.style.display = 'block';
+  const labels = { A:"Option A — Tue Mar 25", B:"Option B — Wed Mar 26", C:"Option C — Thu Mar 27", D:"Option D — Tue Apr 1" };
+
+  Object.keys(tally).forEach(opt => {
+    const t = tally[opt];
+    const total = t.yes + t.maybe + t.no;
+    if (total === 0) return;
+    const card = document.createElement('div');
+    card.className = 'tally-card';
+    card.innerHTML = `
+      <div class="tl">
+        <strong>${labels[opt]}</strong>
+        ${total} response${total!==1?'s':''}
+      </div>
+      <div class="tally-bars">
+        <div class="tb tb-yes">${t.yes}</div>
+        <div class="tb tb-maybe">${t.maybe}</div>
+        <div class="tb tb-no">${t.no}</div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+</script>
+
+</body>
+</html>
